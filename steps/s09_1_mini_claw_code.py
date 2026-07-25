@@ -1,0 +1,94 @@
+import os
+import sys
+import json
+import select
+import subprocess
+from dotenv import load_dotenv
+from langchain_openai import ChatOpenAI
+from langchain_core.messages import HumanMessage, SystemMessage, ToolMessage
+from langchain_core.tools import tool
+
+load_dotenv(override=True)
+
+@tool
+def bash(command: str) -> str:
+	"""Execute a bash command and return the output."""
+	result = subprocess.run(command, shell=True, capture_output=True, text=True, stdin=subprocess.DEVNULL)
+	output = result.stdout
+	if result.stderr:
+		output += "\nSTDERR:\n" + result.stderr
+	return output or "(no output)"
+
+@tool
+def todowrite(todos: list[dict]) -> str:
+	"""Create and manage a structured task list. Each todo has: content (str), status ('pending'|'in_progress'|'completed'), activeForm (str)."""
+	return "Todos have been modified successfully. Ensure that you continue to use the todo list to track your progress. Please proceed with the current tasks if applicable"
+
+with open("prompts/bash.txt", "r") as f:
+	bash.description = f.read()
+with open("prompts/todowrite.txt", "r") as f:
+	todowrite.description = f.read()
+
+tools = [bash, todowrite]
+MODEL = "deepseek-v4-flash"
+# MODEL = "deepseek-v4-pro"
+THINKING = {"type": "disabled"}
+# THINKING = {"type": "enabled"}
+llm = ChatOpenAI(
+	model=MODEL,
+	base_url="https://api.deepseek.com",
+	api_key=os.getenv("DEEPSEEK_API_KEY"),
+	extra_body={"thinking": THINKING},
+).bind_tools(tools)
+tools_by_name = {t.name: t for t in tools}
+
+# ---- display only: proves the descriptions now come from the .txt files ----
+print("Available tools:")
+for t in tools:
+	print(f"  - {t.name}: {t.description[:80]}...")
+
+with open("prompts/system_prompt.txt", "r") as f:
+	system_prompt = f.read()
+messages = [SystemMessage(content=system_prompt)]
+
+def chat(user_input: str):
+	messages.append(HumanMessage(content=user_input))
+	while True:
+		response = llm.invoke(messages)
+		messages.append(response)
+
+		if not response.tool_calls:
+			return response.content
+
+		for tc in response.tool_calls:
+			print(f"  [Tool: {tc['name']}] {json.dumps(tc['args'], ensure_ascii=False)[:120]}")
+			result = tools_by_name[tc["name"]].invoke(tc["args"])
+			print(f"  [Result] {str(result)[:200]}")
+			messages.append(ToolMessage(content=str(result), tool_call_id=tc["id"]))
+
+
+print("\n--- Mini Claw Code ---")
+print("An educational minimal clone of Claude Code")
+print("Tools: bash, todowrite")
+print("Type 'quit' to exit\n")
+
+def read_user_input():
+	# A pasted multi-line prompt arrives as many lines at once, but input() takes
+	# only the first. Drain the rest so the whole paste is ONE message.
+	first = input("You: ")
+	if not sys.stdin.isatty():
+		return first
+	rest = []
+	while select.select([sys.stdin], [], [], 0.05)[0]:
+		line = sys.stdin.readline()
+		if not line:
+			break
+		rest.append(line.rstrip("\n"))
+	return "\n".join([first, *rest]) if rest else first
+
+while True:
+	user_input = read_user_input()
+	if user_input.strip().lower() == "quit":
+		break
+	print(chat(user_input))
+	print("=" * 40)

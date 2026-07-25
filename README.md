@@ -52,10 +52,6 @@ Kiểm tra nhanh: `git --version && uv --version && node -v`
 
 > `s09_1` và `s10` đọc `prompts/` theo đường dẫn tương đối — **chạy từ thư mục gốc repo**.
 
-## Đổi sang OpenAI
-
-3 chỗ trong phần khởi tạo `ChatOpenAI`: tên model, bỏ `base_url`, đổi sang `OPENAI_API_KEY`.
-
 ---
 
 Code để **học**, không phải để đưa lên production.

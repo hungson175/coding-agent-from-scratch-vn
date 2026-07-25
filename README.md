@@ -37,7 +37,10 @@ File này viết để một coding agent đọc và tự thực hiện được
 | `git` | clone code — macOS: `xcode-select --install` (**không cần Xcode full**) | https://developer.apple.com/xcode/resources/ |
 | `uv` | quản lý Python + thư viện. **Không cần cài Python riêng** (project cần Python ≥ 3.11) | https://docs.astral.sh/uv/getting-started/installation/ |
 | `node` **≥ 20** | **bắt buộc cho bài capstone** — agent tự dựng app Vite + React rồi chạy dev server | https://nodejs.org |
+| **VS Code** | khóa học dùng VS Code — mở code bằng nó để bám theo cho dễ | https://code.visualstudio.com |
 | DeepSeek API key | model dùng trong khóa, trả theo mức dùng | https://platform.deepseek.com |
+
+**Cách học:** mở VS Code và **tự gõ lại code**, đừng copy-paste. Code đầy đủ ở đây là để đối chiếu khi kẹt, không phải để dán cho nhanh.
 
 Kiểm tra nhanh: `git --version && uv --version && node -v`
 

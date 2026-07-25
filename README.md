@@ -30,19 +30,21 @@ File này viết để một coding agent đọc và tự thực hiện được
 
 ---
 
-## Yêu cầu
+## Script tự cài những gì
 
-| Tool | Vì sao | Link |
-|---|---|---|
-| `git` | clone code — macOS: `xcode-select --install` (**không cần Xcode full**) | https://developer.apple.com/xcode/resources/ |
-| `uv` | quản lý Python + thư viện. **Không cần cài Python riêng** (project cần Python ≥ 3.11) | https://docs.astral.sh/uv/getting-started/installation/ |
-| `node` **≥ 20** | **bắt buộc cho bài capstone** — agent tự dựng app Vite + React rồi chạy dev server | https://nodejs.org |
-| **VS Code** | khóa học dùng VS Code — mở code bằng nó để bám theo cho dễ | https://code.visualstudio.com |
-| DeepSeek API key | model dùng trong khóa, trả theo mức dùng | https://platform.deepseek.com |
+Thiếu cái nào, script cài cái đó — bạn không phải cài tay:
+
+| Tool | Vì sao |
+|---|---|
+| Xcode Command Line Tools | để có `git` (**không cần Xcode full**) |
+| Homebrew | để cài mấy cái dưới |
+| `uv` | quản lý Python + thư viện. **Không cần cài Python riêng** (project cần Python ≥ 3.11) |
+| Node.js | **bắt buộc cho bài capstone** — agent tự dựng app Vite + React rồi chạy dev server |
+| VS Code | editor dùng trong khóa học |
+
+Thứ duy nhất bạn phải tự làm: lấy **DeepSeek API key** ở https://platform.deepseek.com và dán vào `.env`.
 
 **Cách học:** mở VS Code và **tự gõ lại code**, đừng copy-paste. Code đầy đủ ở đây là để đối chiếu khi kẹt, không phải để dán cho nhanh.
-
-Kiểm tra nhanh: `git --version && uv --version && node -v`
 
 ## Ladder
 
